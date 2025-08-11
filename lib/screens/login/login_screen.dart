@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../home/home_screen.dart';
 import 'register_screen.dart';
-import '../../onboarding/onboarding_screen.dart' show AnimatedBackground;
+import '../onboarding/onboarding_screen.dart' show AnimatedBackground; // Ruta actualizada
 
 // Pantalla de Login tradicional sin fondo animado
 class LoginScreen extends StatelessWidget {

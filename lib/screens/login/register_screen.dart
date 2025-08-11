@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../home/home_screen.dart';
-import '../../onboarding/onboarding_screen.dart' show AnimatedBackground;
+import '../onboarding/onboarding_screen.dart' show AnimatedBackground;
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

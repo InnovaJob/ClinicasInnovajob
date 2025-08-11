@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../onboarding/onboarding_screen.dart' show AnimatedBackground;
+import '../onboarding/onboarding_screen.dart' show AnimatedBackground; // Ruta actualizada
+import '../appointments/appointments_screen.dart';
+import '../productos/productos_screen.dart';
+import '../messages/messages_screen.dart'; // Añadido
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -27,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   // Fondo animado en el drawer
                   AnimatedBackground(),
-                  _SideMenu(),
+                  _SideMenu(selectedIndex: _selectedIndex), // Pasa el índice seleccionado
                 ],
               ),
             ),
@@ -117,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             // Fondo transparente para dejar ver el AnimatedBackground
                             ClipRect(child: AnimatedBackground()),
-                            _SideMenu(),
+                            _SideMenu(selectedIndex: _selectedIndex), // Pasa el índice seleccionado
                           ],
                         ),
                       ),
@@ -292,9 +295,29 @@ class _HomeScreenState extends State<HomeScreen> {
           : BottomNavigationBar(
               currentIndex: _selectedIndex,
               onTap: (index) {
+                if (index == _selectedIndex) return;
+
                 setState(() {
                   _selectedIndex = index;
                 });
+
+                // Navegación entre pantallas
+                if (index == 1) {
+                  // Ir a la pantalla de citas
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const AppointmentsScreen()),
+                  );
+                } else if (index == 2) {
+                  // Ir a la pantalla de productos
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const ProductosScreen()),
+                  );
+                } else if (index == 3) {
+                  // Ir a la pantalla de mensajes
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const MessagesScreen()),
+                  );
+                }
               },
               type: BottomNavigationBarType.fixed,
               selectedItemColor: Theme.of(context).primaryColor,
@@ -311,8 +334,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: 'Citas',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.people),
-                  label: 'Pacientes',
+                  icon: Icon(Icons.shopping_bag),  // Cambio del icono a shopping_bag
+                  label: 'Productos',               // Cambio de Pacientes a Productos
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.chat),
@@ -325,6 +348,9 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _SideMenu extends StatelessWidget {
+  final int selectedIndex;
+  const _SideMenu({this.selectedIndex = 0});
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -366,9 +392,11 @@ class _SideMenu extends StatelessWidget {
           icon: Icons.dashboard,
           title: 'Panel Principal',
           onTap: () {
-            Navigator.of(context).maybePop();
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
           },
-          isSelected: true,
+          isSelected: selectedIndex == 0,
           textColor: Colors.white,
           iconColor: Colors.white,
         ),
@@ -376,26 +404,35 @@ class _SideMenu extends StatelessWidget {
           icon: Icons.calendar_today,
           title: 'Citas',
           onTap: () {
-            Navigator.of(context).maybePop();
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const AppointmentsScreen()),
+            );
           },
+          isSelected: selectedIndex == 1,
           textColor: Colors.white,
           iconColor: Colors.white,
         ),
         _MenuListTile(
-          icon: Icons.people,
-          title: 'Pacientes',
+          icon: Icons.shopping_bag,  // Cambio del icono a shopping_bag
+          title: 'Productos',        // Cambio de Pacientes a Productos
           onTap: () {
-            Navigator.of(context).maybePop();
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const ProductosScreen()),
+            );
           },
+          isSelected: selectedIndex == 2,
           textColor: Colors.white,
           iconColor: Colors.white,
         ),
         _MenuListTile(
           icon: Icons.chat,
-          title: 'Contactar Doctor',
+          title: 'Mensajes',
           onTap: () {
-            Navigator.of(context).maybePop();
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const MessagesScreen()),
+            );
           },
+          isSelected: selectedIndex == 3,
           textColor: Colors.white,
           iconColor: Colors.white,
         ),
@@ -769,4 +806,3 @@ class _QuickAccessButton extends StatelessWidget {
     );
   }
 }
-

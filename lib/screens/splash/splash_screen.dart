@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../onboarding/onboarding_screen.dart';
-import '../../onboarding/onboarding_screen.dart' show AnimatedBackground;
+import '../onboarding/onboarding_screen.dart';
+import '../onboarding/onboarding_screen.dart' show AnimatedBackground;
 
 // Pantalla Splash que muestra el logo y navega al onboarding tras 2 segundos
 class SplashScreen extends StatefulWidget {
