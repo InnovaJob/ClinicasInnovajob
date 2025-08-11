@@ -90,18 +90,7 @@ class __FormContentState extends State<_FormContent> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextFormField(
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, introduce tu correo';
-                }
-                bool emailValid = RegExp(
-                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
-                ).hasMatch(value);
-                if (!emailValid) {
-                  return 'Introduce un correo válido';
-                }
-                return null;
-              },
+              // validator eliminado para permitir campos vacíos
               decoration: const InputDecoration(
                 labelText: 'Correo electrónico',
                 hintText: 'Introduce tu correo',
@@ -113,15 +102,7 @@ class __FormContentState extends State<_FormContent> {
             ),
             const SizedBox(height: 16),
             TextFormField(
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, introduce tu contraseña';
-                }
-                if (value.length < 6) {
-                  return 'La contraseña debe tener al menos 6 caracteres';
-                }
-                return null;
-              },
+              // validator eliminado para permitir campos vacíos
               obscureText: !_isPasswordVisible,
               decoration: InputDecoration(
                 labelText: 'Contraseña',
@@ -179,11 +160,10 @@ class __FormContentState extends State<_FormContent> {
                   ),
                 ),
                 onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => const HomeScreen()),
-                    );
-                  }
+                  // Ir siempre a HomeScreen, sin validación
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                  );
                 },
               ),
             ),

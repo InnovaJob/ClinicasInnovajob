@@ -1,173 +1,161 @@
 import 'package:flutter/material.dart';
+import '../../onboarding/onboarding_screen.dart' show AnimatedBackground;
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final userName = "Usuario"; // Puedes personalizarlo si tienes datos de usuario
+    final bool isLargeScreen = MediaQuery.of(context).size.width > 700;
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF2193b0), Color(0xFF6dd5ed)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header con avatar y saludo
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-                child: Row(
+      // Drawer con fondo transparente para mostrar el AnimatedBackground
+      drawer: isLargeScreen
+          ? null
+          : Drawer(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: Stack(
+                children: [
+                  // Fondo animado en el drawer
+                  AnimatedBackground(),
+                  SafeArea(child: _SideMenu()),
+                ],
+              ),
+            ),
+      appBar: AppBar(
+        title: const Text('Panel de la Clínica'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: isLargeScreen
+            ? null
+            : Builder(
+                builder: (context) => IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                ),
+              ),
+      ),
+      extendBodyBehindAppBar: true,
+      body: Row(
+        children: [
+          if (isLargeScreen)
+            Container(
+              width: 260,
+              child: Stack(
+                children: [
+                  // Fondo animado en el menú lateral para pantallas grandes
+                  ClipRect(child: AnimatedBackground()),
+                  SafeArea(child: _SideMenu()),
+                ],
+              ),
+            ),
+          Expanded(
+            child: Container(
+              color: Colors.white, // Fondo blanco para la pantalla principal
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircleAvatar(
-                      radius: 32,
-                      backgroundColor: Colors.white,
-                      child: Icon(Icons.person, size: 40, color: Color(0xFF2193b0)),
+                    const Text(
+                      '¡Bienvenido a la gestión de tu clínica!',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black), // Texto negro para fondo blanco
+                      textAlign: TextAlign.center,
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '¡Bienvenido, $userName!',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Panel de la Clínica',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Aquí puedes navegar a la pantalla de reservas, pacientes, etc.
+                      },
+                      child: const Text('Ver Reservas'),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Aquí puedes navegar a la pantalla de pacientes
+                      },
+                      child: const Text('Ver Pacientes'),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Aquí puedes navegar a la pantalla de servicios
+                      },
+                      child: const Text('Ver Servicios'),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
-              // Tarjetas de acciones principales
-              Expanded(
-                child: GridView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 24,
-                    crossAxisSpacing: 24,
-                    childAspectRatio: 1,
-                  ),
-                  children: [
-                    _HomeCard(
-                      icon: Icons.calendar_today_rounded,
-                      label: 'Reservas',
-                      color: Colors.blueAccent,
-                      onTap: () {
-                        // Navegar a reservas
-                      },
-                    ),
-                    _HomeCard(
-                      icon: Icons.people_alt_rounded,
-                      label: 'Pacientes',
-                      color: Colors.green,
-                      onTap: () {
-                        // Navegar a pacientes
-                      },
-                    ),
-                    _HomeCard(
-                      icon: Icons.medical_services_rounded,
-                      label: 'Servicios',
-                      color: Colors.purple,
-                      onTap: () {
-                        // Navegar a servicios
-                      },
-                    ),
-                    _HomeCard(
-                      icon: Icons.settings_rounded,
-                      label: 'Ajustes',
-                      color: Colors.orange,
-                      onTap: () {
-                        // Navegar a ajustes
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              // Footer
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16, top: 8),
-                child: Center(
-                  child: Text(
-                    'Clínica Innova © 2024',
-                    style: TextStyle(color: Colors.white.withOpacity(0.7)),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
-class _HomeCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _HomeCard({
-    required this.icon,
-    required this.label,
-    required this.color,
-    required this.onTap,
-  });
-
+class _SideMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white.withOpacity(0.9),
-      borderRadius: BorderRadius.circular(18),
-      elevation: 6,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(18),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        DrawerHeader(
+          decoration: BoxDecoration(
+            // Quitamos el color sólido para que se vea el fondo animado
+            color: Colors.transparent,
+          ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                backgroundColor: color.withOpacity(0.15),
-                radius: 28,
-                child: Icon(icon, color: color, size: 32),
-              ),
-              const SizedBox(height: 18),
               Text(
-                label,
+                'Menú',
                 style: TextStyle(
-                  color: color,
+                  color: Colors.white,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  letterSpacing: 0.5,
                 ),
               ),
+              SizedBox(height: 10),
+              Divider(color: Colors.white.withOpacity(0.7), thickness: 1),
             ],
           ),
         ),
-      ),
+        ListTile(
+          leading: const Icon(Icons.calendar_today, color: Colors.white),
+          title: const Text('Citas', style: TextStyle(color: Colors.white)),
+          onTap: () {
+            Navigator.of(context).maybePop();
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.chat, color: Colors.white),
+          title: const Text('Contactar con el doctor', style: TextStyle(color: Colors.white)),
+          onTap: () {
+            Navigator.of(context).maybePop();
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.article, color: Colors.white),
+          title: const Text('Noticias', style: TextStyle(color: Colors.white)),
+          onTap: () {
+            Navigator.of(context).maybePop();
+          },
+        ),
+        Divider(color: Colors.white.withOpacity(0.5)),
+        ListTile(
+          leading: const Icon(Icons.logout, color: Colors.white),
+          title: const Text('Cerrar sesión', style: TextStyle(color: Colors.white)),
+          onTap: () {
+            Navigator.of(context).maybePop();
+          },
+        ),
+      ],
     );
   }
 }
