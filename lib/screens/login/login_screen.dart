@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../home/home_screen.dart';
 import '../onboarding/onboarding_screen.dart' show AnimatedBackground;
 import 'register_screen.dart';
+import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -17,6 +18,34 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
   bool _rememberMe = false;
 
+  // Definir estilos comunes para reutilizar
+  final _whiteColor = Colors.white;
+  final _whiteColorWithOpacity = Colors.white.withOpacity(0.7);
+
+  // Optimización de decoraciones reutilizables
+  late final InputDecoration _inputDecoration;
+
+  @override
+  void initState() {
+    super.initState();
+    _inputDecoration = InputDecoration(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: _whiteColorWithOpacity),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: _whiteColorWithOpacity),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: _whiteColor),
+      ),
+      labelStyle: TextStyle(color: _whiteColor),
+      hintStyle: TextStyle(color: _whiteColorWithOpacity),
+    );
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -26,6 +55,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -35,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Stack(
         children: [
           // Fondo animado
-          AnimatedBackground(),
+          const AnimatedBackground(),
 
           // Contenido
           Center(
@@ -57,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Icon(
                         Icons.medical_services,
                         size: 64,
-                        color: Colors.white,
+                        color: _whiteColor,
                       ),
                       const SizedBox(height: 24),
 
@@ -66,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         'Clínica Médica',
                         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: _whiteColor,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -76,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         'Inicia sesión para continuar',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withOpacity(0.8),
+                          color: _whiteColor.withOpacity(0.8),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -90,40 +121,19 @@ class _LoginScreenState extends State<LoginScreen> {
                             icon: 'assets/icons/google.png',
                             fallbackIcon: Icons.g_mobiledata,
                             label: 'Google',
-                            onPressed: () {
-                              // Implementar inicio de sesión con Google
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              );
-                            },
+                            onPressed: () => _loginWithSocial(() => const HomeScreen()),
                           ),
                           _buildSocialLoginButton(
                             icon: 'assets/icons/apple.png',
                             fallbackIcon: Icons.apple,
                             label: 'Apple',
-                            onPressed: () {
-                              // Implementar inicio de sesión con Apple
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              );
-                            },
+                            onPressed: () => _loginWithSocial(() => const HomeScreen()),
                           ),
                           _buildSocialLoginButton(
                             icon: 'assets/icons/facebook.png',
                             fallbackIcon: Icons.facebook,
                             label: 'Facebook',
-                            onPressed: () {
-                              // Implementar inicio de sesión con Facebook
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              );
-                            },
+                            onPressed: () => _loginWithSocial(() => const HomeScreen()),
                           ),
                         ],
                       ),
@@ -134,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           Expanded(
                             child: Divider(
-                              color: Colors.white.withOpacity(0.5),
+                              color: _whiteColor.withOpacity(0.5),
                               thickness: 1,
                             ),
                           ),
@@ -143,14 +153,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               'O inicia sesión con',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
+                                color: _whiteColor.withOpacity(0.8),
                                 fontSize: 12,
                               ),
                             ),
                           ),
                           Expanded(
                             child: Divider(
-                              color: Colors.white.withOpacity(0.5),
+                              color: _whiteColor.withOpacity(0.5),
                               thickness: 1,
                             ),
                           ),
@@ -161,29 +171,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Campo de email
                       TextFormField(
                         controller: _emailController,
-                        decoration: InputDecoration(
+                        decoration: _inputDecoration.copyWith(
                           labelText: 'Correo electrónico',
                           hintText: 'ejemplo@correo.com',
-                          prefixIcon: const Icon(Icons.email_outlined, color: Colors.white70),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white70),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white70),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          labelStyle: TextStyle(color: Colors.white),
-                          hintStyle: TextStyle(color: Colors.white70),
+                          prefixIcon: Icon(Icons.email_outlined, color: _whiteColorWithOpacity),
                         ),
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: _whiteColor),
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
-                          // No validamos para permitir campos vacíos
                           return null;
                         },
                       ),
@@ -192,16 +187,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Campo de contraseña
                       TextFormField(
                         controller: _passwordController,
-                        decoration: InputDecoration(
+                        decoration: _inputDecoration.copyWith(
                           labelText: 'Contraseña',
                           hintText: 'Ingresa tu contraseña',
-                          prefixIcon: const Icon(Icons.lock_outline, color: Colors.white70),
+                          prefixIcon: Icon(Icons.lock_outline, color: _whiteColorWithOpacity),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _isPasswordVisible
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: Colors.white70,
+                              _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                              color: _whiteColorWithOpacity,
                             ),
                             onPressed: () {
                               setState(() {
@@ -209,25 +202,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               });
                             },
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white70),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white70),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          labelStyle: TextStyle(color: Colors.white),
-                          hintStyle: TextStyle(color: Colors.white70),
                         ),
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: _whiteColor),
                         obscureText: !_isPasswordVisible,
                         validator: (value) {
-                          // No validamos para permitir campos vacíos
                           return null;
                         },
                       ),
@@ -239,12 +217,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           // Checkbox "Recordarme"
                           Theme(
                             data: ThemeData(
-                              unselectedWidgetColor: Colors.white70,
+                              unselectedWidgetColor: _whiteColorWithOpacity,
                             ),
                             child: Checkbox(
                               value: _rememberMe,
                               checkColor: Colors.black,
-                              activeColor: Colors.white,
+                              activeColor: _whiteColor,
                               onChanged: (value) {
                                 setState(() {
                                   _rememberMe = value ?? false;
@@ -252,16 +230,20 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                             ),
                           ),
-                          Text('Recordarme', style: TextStyle(color: Colors.white)),
+                          Text('Recordarme', style: TextStyle(color: _whiteColor)),
                           const Spacer(),
                           // Olvidé mi contraseña
                           TextButton(
                             onPressed: () {
-                              // Navegar a pantalla de recuperación de contraseña
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const ForgotPasswordScreen(),
+                                ),
+                              );
                             },
                             child: Text(
                               '¿Olvidaste tu contraseña?',
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(color: _whiteColor),
                             ),
                           ),
                         ],
@@ -280,8 +262,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          backgroundColor: Colors.white,
-                          foregroundColor: Theme.of(context).primaryColor,
+                          backgroundColor: _whiteColor,
+                          foregroundColor: primaryColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -300,7 +282,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('¿No tienes una cuenta?', style: TextStyle(color: Colors.white)),
+                          Text('¿No tienes una cuenta?', style: TextStyle(color: _whiteColor)),
                           TextButton(
                             onPressed: () {
                               // Navegar a pantalla de registro
@@ -313,7 +295,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               'Regístrate',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: _whiteColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -327,6 +309,15 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Método para optimizar la navegación con inicio de sesión social
+  void _loginWithSocial(Widget Function() destinationBuilder) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => destinationBuilder(),
       ),
     );
   }
@@ -346,7 +337,7 @@ class _LoginScreenState extends State<LoginScreen> {
             width: 55,
             height: 55,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: _whiteColor,
               borderRadius: BorderRadius.circular(50),
               boxShadow: [
                 BoxShadow(
@@ -365,7 +356,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Text(
           label,
           style: TextStyle(
-            color: Colors.white,
+            color: _whiteColor,
             fontSize: 12,
           ),
         ),
@@ -374,7 +365,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildSocialIcon(String assetPath, IconData fallbackIcon) {
-    // Intenta cargar la imagen del asset, si no existe muestra el icono fallback
+    // Precache de imágenes para mejorar rendimiento
+    final primaryColor = Theme.of(context).primaryColor;
+
     try {
       return Image.asset(
         assetPath,
@@ -383,7 +376,7 @@ class _LoginScreenState extends State<LoginScreen> {
         errorBuilder: (context, error, stackTrace) {
           return Icon(
             fallbackIcon,
-            color: Theme.of(context).primaryColor,
+            color: primaryColor,
             size: 30,
           );
         },
@@ -391,7 +384,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       return Icon(
         fallbackIcon,
-        color: Theme.of(context).primaryColor,
+        color: primaryColor,
         size: 30,
       );
     }

@@ -3,8 +3,12 @@ import '../screens/home/home_screen.dart';
 import '../screens/appointments/appointments_screen.dart';
 import '../screens/productos/productos_screen.dart';
 import '../screens/messages/messages_screen.dart';
+import '../screens/historial/historial_screen.dart';
+import '../screens/noticias/noticias_screen.dart';
+import '../screens/servicios/servicios_screen.dart';
 import '../screens/configuracion/configuracion_screen.dart';
-import '../screens/login/login_screen.dart'; // Importamos la pantalla de login
+import '../screens/login/login_screen.dart';
+import '../screens/medicamentos/medicamentos_screen.dart'; // Importar la pantalla de medicamentos
 
 class SideMenu extends StatelessWidget {
   final int selectedIndex;
@@ -125,28 +129,53 @@ class SideMenu extends StatelessWidget {
                 _buildMenuItem(
                   context: context,
                   index: 4,
-                  title: 'Historial',
-                  icon: Icons.history,
+                  title: 'Noticias',
+                  icon: Icons.article,
                   onTap: () {
-                    // Navegación a la pantalla de historial
+                    if (selectedIndex != 4) {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => const NoticiasScreen()),
+                      );
+                    }
                   },
                 ),
                 _buildMenuItem(
                   context: context,
                   index: 5,
-                  title: 'Recordatorios',
-                  icon: Icons.notifications,
+                  title: 'Servicios',
+                  icon: Icons.medical_services,
                   onTap: () {
-                    // Navegación a la pantalla de recordatorios
+                    if (selectedIndex != 5) {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => const ServiciosScreen()),
+                      );
+                    }
                   },
                 ),
                 _buildMenuItem(
                   context: context,
                   index: 6,
-                  title: 'Facturación',
-                  icon: Icons.receipt,
+                  title: 'Historial',
+                  icon: Icons.history,
                   onTap: () {
-                    // Navegación a la pantalla de facturación
+                    if (selectedIndex != 6) {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => const HistorialScreen()),
+                      );
+                    }
+                  },
+                ),
+                _buildMenuItem(
+                  context: context,
+                  index: 9,
+                  title: 'Mis Medicamentos',
+                  icon: Icons.medication,
+                  onTap: () {
+                    if (selectedIndex != 9) {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => const MedicamentosScreen()),
+                      );
+                    }
                   },
                 ),
                 // Otras opciones del menú...

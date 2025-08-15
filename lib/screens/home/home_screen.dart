@@ -5,7 +5,8 @@ import '../productos/productos_screen.dart';
 import '../messages/messages_screen.dart';
 import '../configuracion/configuracion_screen.dart';
 import '../notifications/notifications_screen.dart';
-import '../notifications/notification_detail_screen.dart'; // Importar pantalla de detalle
+import '../notifications/notification_detail_screen.dart';
+import '../medicamentos/medicamentos_screen.dart'; // Importar la pantalla de medicamentos
 import '../../widgets/side_menu.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -47,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final bool isLargeScreen = MediaQuery.of(context).size.width > 700;
     final textTheme = Theme.of(context).textTheme;
+    final primaryColor = Theme.of(context).primaryColor;
 
     return Scaffold(
       // Drawer con fondo animado para pantallas pequeñas
@@ -169,105 +171,103 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Título del dashboard
+                              // Saludo personalizado
                               Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                                child: Text(
-                                  'Panel de Control',
-                                  style: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 28,
-                                    letterSpacing: -0.5,
-                                    color: Colors.grey[800],
-                                  ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '¡Hola, María!',
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 28,
+                                        letterSpacing: -0.5,
+                                        color: Colors.grey[800],
+                                      ),
+                                    ),
+                                    Text(
+                                      'Bienvenida a tu portal de salud',
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 16,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
 
-                              // Tarjetas de acceso rápido
+                              // Accesos rápidos
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 24.0),
                                 child: Row(
                                   children: [
                                     _QuickAccessButton(
                                       icon: Icons.calendar_month,
-                                      label: 'Nueva Cita',
-                                      onTap: () {},
-                                      color: Colors.blue,
+                                      label: 'Solicitar Cita',
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (context) => const AppointmentsScreen()),
+                                        );
+                                      },
+                                      color: primaryColor,
                                     ),
                                     _QuickAccessButton(
-                                      icon: Icons.person_add,
-                                      label: 'Nuevo Paciente',
-                                      onTap: () {},
+                                      icon: Icons.chat,
+                                      label: 'Consultar Médico',
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (context) => const MessagesScreen()),
+                                        );
+                                      },
                                       color: Colors.green,
                                     ),
                                     _QuickAccessButton(
-                                      icon: Icons.medical_services,
-                                      label: 'Nuevo Servicio',
-                                      onTap: () {},
+                                      icon: Icons.medication,
+                                      label: 'Mis Medicamentos',
+                                      onTap: () {
+                                        // Navegar a la pantalla de medicamentos
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (context) => const MedicamentosScreen()),
+                                        );
+                                      },
                                       color: Colors.orange,
                                     ),
                                   ],
                                 ),
                               ),
 
-                              // Tarjetas de estadísticas
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 24.0),
-                                child: Row(
-                                  children: [
-                                    _StatCard(
-                                      title: 'Pacientes Hoy',
-                                      value: '12',
-                                      icon: Icons.people,
-                                      color: Colors.blue,
-                                    ),
-                                    _StatCard(
-                                      title: 'Ingresos',
-                                      value: '€1,250',
-                                      icon: Icons.euro,
-                                      color: Colors.green,
-                                    ),
-                                    _StatCard(
-                                      title: 'Citas Pendientes',
-                                      value: '8',
-                                      icon: Icons.calendar_today,
-                                      color: Colors.orange,
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              // Tarjeta de citas del día
+                              // Próximas citas
                               _CardContainer(
-                                title: 'Citas de Hoy',
-                                icon: Icons.today,
+                                title: 'Tus Próximas Citas',
+                                icon: Icons.event_note,
                                 child: Column(
                                   children: [
                                     _AppointmentItem(
-                                      time: '09:00',
-                                      name: 'María García',
+                                      time: 'Hoy, 15:30',
+                                      name: 'Dr. Carlos Martínez',
                                       service: 'Consulta General',
                                       status: 'Confirmada',
                                     ),
                                     _AppointmentItem(
-                                      time: '10:30',
-                                      name: 'Juan Pérez',
-                                      service: 'Dermatología',
-                                      status: 'En espera',
-                                    ),
-                                    _AppointmentItem(
-                                      time: '12:00',
-                                      name: 'Ana Martínez',
-                                      service: 'Pediatría',
-                                      status: 'Completada',
+                                      time: '25 Nov, 10:00',
+                                      name: 'Dra. Laura Fernández',
+                                      service: 'Odontología',
+                                      status: 'Pendiente',
                                     ),
                                     TextButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (context) => const AppointmentsScreen()),
+                                        );
+                                      },
                                       child: Text(
-                                        'Ver todas las citas',
+                                        'Ver todas mis citas',
                                         style: textTheme.labelLarge?.copyWith(
-                                          color: Theme.of(context).primaryColor,
+                                          color: primaryColor,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -278,36 +278,99 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               const SizedBox(height: 24),
 
-                              // Tarjeta de próximas citas
+                              // Mis medicamentos actuales
                               _CardContainer(
-                                title: 'Próximas Citas',
-                                icon: Icons.event_note,
+                                title: 'Mis Medicamentos Actuales',
+                                icon: Icons.medication_outlined,
                                 child: Column(
                                   children: [
-                                    _AppointmentItem(
-                                      time: 'Mañana, 09:30',
-                                      name: 'Carlos Ruiz',
-                                      service: 'Fisioterapia',
-                                      status: 'Confirmada',
+                                    _MedicationItem(
+                                      name: 'Paracetamol',
+                                      dosage: '500mg',
+                                      frequency: 'Cada 8 horas',
+                                      remainingDays: 5,
                                     ),
-                                    _AppointmentItem(
-                                      time: 'Mañana, 11:00',
-                                      name: 'Laura Sánchez',
-                                      service: 'Odontología',
-                                      status: 'Pendiente',
+                                    _MedicationItem(
+                                      name: 'Ibuprofeno',
+                                      dosage: '400mg',
+                                      frequency: 'Cada 12 horas',
+                                      remainingDays: 3,
                                     ),
-                                    _AppointmentItem(
-                                      time: '23 Nov, 10:15',
-                                      name: 'Roberto Fernández',
-                                      service: 'Nutrición',
-                                      status: 'Confirmada',
+                                    TextButton(
+                                      onPressed: () {
+                                        // Navegar a la pantalla de medicamentos
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (context) => const MedicamentosScreen()),
+                                        );
+                                      },
+                                      child: Text(
+                                        'Ver todos mis medicamentos',
+                                        style: textTheme.labelLarge?.copyWith(
+                                          color: primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              const SizedBox(height: 24),
+
+                              // Resultados recientes
+                              _CardContainer(
+                                title: 'Mis Resultados Recientes',
+                                icon: Icons.description_outlined,
+                                child: Column(
+                                  children: [
+                                    _ResultItem(
+                                      title: 'Análisis de sangre',
+                                      date: '15 Nov 2023',
+                                      status: 'Disponible',
+                                    ),
+                                    _ResultItem(
+                                      title: 'Radiografía dental',
+                                      date: '10 Nov 2023',
+                                      status: 'Disponible',
                                     ),
                                     TextButton(
                                       onPressed: () {},
                                       child: Text(
-                                        'Ver agenda completa',
+                                        'Ver todos mis resultados',
                                         style: textTheme.labelLarge?.copyWith(
-                                          color: Theme.of(context).primaryColor,
+                                          color: primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              const SizedBox(height: 24),
+
+                              // Consejos de salud
+                              _CardContainer(
+                                title: 'Consejos de Salud',
+                                icon: Icons.health_and_safety_outlined,
+                                child: Column(
+                                  children: [
+                                    _HealthTipItem(
+                                      title: 'Hidratación diaria',
+                                      description: 'Recuerda beber al menos 2 litros de agua al día para mantener una buena hidratación.',
+                                      icon: Icons.water_drop_outlined,
+                                    ),
+                                    _HealthTipItem(
+                                      title: 'Ejercicio regular',
+                                      description: 'Realiza al menos 30 minutos de actividad física moderada diariamente.',
+                                      icon: Icons.fitness_center_outlined,
+                                    ),
+                                    TextButton(
+                                      onPressed: () {},
+                                      child: Text(
+                                        'Ver más consejos de salud',
+                                        style: textTheme.labelLarge?.copyWith(
+                                          color: primaryColor,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -374,8 +437,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: 'Citas',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.shopping_bag),  // Cambio del icono a shopping_bag
-                  label: 'Productos',               // Cambio de Pacientes a Productos
+                  icon: Icon(Icons.shopping_bag),
+                  label: 'Productos',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.chat),
@@ -886,6 +949,258 @@ class _QuickAccessButton extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+// Nuevos componentes para la pantalla de inicio orientada al cliente
+class _MedicationItem extends StatelessWidget {
+  final String name;
+  final String dosage;
+  final String frequency;
+  final int remainingDays;
+
+  const _MedicationItem({
+    required this.name,
+    required this.dosage,
+    required this.frequency,
+    required this.remainingDays,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              Icons.medication_outlined,
+              color: primaryColor,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      name,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        dosage,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  frequency,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '$remainingDays días',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: remainingDays <= 3 ? Colors.orange : Colors.grey[700],
+                ),
+              ),
+              Text(
+                'restantes',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ResultItem extends StatelessWidget {
+  final String title;
+  final String date;
+  final String status;
+
+  const _ResultItem({
+    required this.title,
+    required this.date,
+    required this.status,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              Icons.insert_drive_file_outlined,
+              color: Colors.blue,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                Text(
+                  date,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.green.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              status,
+              style: const TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+                color: Colors.green,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HealthTipItem extends StatelessWidget {
+  final String title;
+  final String description;
+  final IconData icon;
+
+  const _HealthTipItem({
+    required this.title,
+    required this.description,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.green.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              icon,
+              color: Colors.green,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

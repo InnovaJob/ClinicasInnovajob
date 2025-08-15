@@ -13,8 +13,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
 
+  // Definir estilos comunes para reutilizar
+  final _whiteColor = Colors.white;
+  final _whiteColorWithOpacity = Colors.white.withOpacity(0.7);
+
+  // Optimización de decoraciones reutilizables
+  late final InputDecoration _inputDecoration;
+
+  @override
+  void initState() {
+    super.initState();
+    _inputDecoration = InputDecoration(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: _whiteColorWithOpacity),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: _whiteColorWithOpacity),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: _whiteColor),
+      ),
+      labelStyle: TextStyle(color: _whiteColor),
+      hintStyle: TextStyle(color: _whiteColorWithOpacity),
+      filled: false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -28,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       // Fondo animado igual que splash y login
       body: Stack(
         children: [
-          AnimatedBackground(),
+          const AnimatedBackground(),
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24.0),
@@ -50,7 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         'Crear cuenta',
                         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: _whiteColor,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -60,7 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Text(
                         'Regístrate para comenzar',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withOpacity(0.8),
+                          color: _whiteColor.withOpacity(0.8),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -74,40 +105,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             icon: 'assets/icons/google.png',
                             fallbackIcon: Icons.g_mobiledata,
                             label: 'Google',
-                            onPressed: () {
-                              // Implementar registro con Google
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              );
-                            },
+                            onPressed: () => _registerWithSocial(() => const HomeScreen()),
                           ),
                           _buildSocialRegisterButton(
                             icon: 'assets/icons/apple.png',
                             fallbackIcon: Icons.apple,
                             label: 'Apple',
-                            onPressed: () {
-                              // Implementar registro con Apple
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              );
-                            },
+                            onPressed: () => _registerWithSocial(() => const HomeScreen()),
                           ),
                           _buildSocialRegisterButton(
                             icon: 'assets/icons/facebook.png',
                             fallbackIcon: Icons.facebook,
                             label: 'Facebook',
-                            onPressed: () {
-                              // Implementar registro con Facebook
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              );
-                            },
+                            onPressed: () => _registerWithSocial(() => const HomeScreen()),
                           ),
                         ],
                       ),
@@ -118,7 +128,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         children: [
                           Expanded(
                             child: Divider(
-                              color: Colors.white.withOpacity(0.5),
+                              color: _whiteColor.withOpacity(0.5),
                               thickness: 1,
                             ),
                           ),
@@ -127,14 +137,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             child: Text(
                               'O regístrate con',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
+                                color: _whiteColor.withOpacity(0.8),
                                 fontSize: 12,
                               ),
                             ),
                           ),
                           Expanded(
                             child: Divider(
-                              color: Colors.white.withOpacity(0.5),
+                              color: _whiteColor.withOpacity(0.5),
                               thickness: 1,
                             ),
                           ),
@@ -144,27 +154,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                       // Campo nombre completo
                       TextFormField(
-                        decoration: InputDecoration(
+                        decoration: _inputDecoration.copyWith(
                           labelText: 'Nombre completo',
                           hintText: 'Ingresa tu nombre completo',
-                          prefixIcon: const Icon(Icons.person, color: Colors.white70),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white70),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white70),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          labelStyle: TextStyle(color: Colors.white),
-                          hintStyle: TextStyle(color: Colors.white70),
-                          filled: false,
+                          prefixIcon: Icon(Icons.person, color: _whiteColorWithOpacity),
                         ),
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: _whiteColor),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Introduce tu nombre';
@@ -176,27 +171,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                       // Campo correo electrónico
                       TextFormField(
-                        decoration: InputDecoration(
+                        decoration: _inputDecoration.copyWith(
                           labelText: 'Correo electrónico',
                           hintText: 'ejemplo@correo.com',
-                          prefixIcon: const Icon(Icons.email, color: Colors.white70),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white70),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white70),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          labelStyle: TextStyle(color: Colors.white),
-                          hintStyle: TextStyle(color: Colors.white70),
-                          filled: false,
+                          prefixIcon: Icon(Icons.email, color: _whiteColorWithOpacity),
                         ),
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: _whiteColor),
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -216,16 +196,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       // Campo contraseña
                       TextFormField(
                         obscureText: !_isPasswordVisible,
-                        decoration: InputDecoration(
+                        decoration: _inputDecoration.copyWith(
                           labelText: 'Contraseña',
                           hintText: 'Ingresa tu contraseña',
-                          prefixIcon: const Icon(Icons.lock, color: Colors.white70),
+                          prefixIcon: Icon(Icons.lock, color: _whiteColorWithOpacity),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _isPasswordVisible
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: Colors.white70,
+                              _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                              color: _whiteColorWithOpacity,
                             ),
                             onPressed: () {
                               setState(() {
@@ -233,23 +211,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               });
                             },
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white70),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white70),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          labelStyle: TextStyle(color: Colors.white),
-                          hintStyle: TextStyle(color: Colors.white70),
-                          filled: false,
                         ),
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: _whiteColor),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Introduce una contraseña';
@@ -276,8 +239,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          backgroundColor: Colors.white,
-                          foregroundColor: Theme.of(context).primaryColor,
+                          backgroundColor: _whiteColor,
+                          foregroundColor: primaryColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -296,7 +259,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('¿Ya tienes cuenta?', style: TextStyle(color: Colors.white)),
+                          Text('¿Ya tienes cuenta?', style: TextStyle(color: _whiteColor)),
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
@@ -304,7 +267,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             child: Text(
                               'Inicia sesión',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: _whiteColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -318,6 +281,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Método para optimizar la navegación con registro social
+  void _registerWithSocial(Widget Function() destinationBuilder) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => destinationBuilder(),
       ),
     );
   }
@@ -337,7 +309,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             width: 55,
             height: 55,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: _whiteColor,
               borderRadius: BorderRadius.circular(50),
               boxShadow: [
                 BoxShadow(
@@ -356,7 +328,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Text(
           label,
           style: TextStyle(
-            color: Colors.white,
+            color: _whiteColor,
             fontSize: 12,
           ),
         ),
@@ -365,7 +337,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildSocialIcon(String assetPath, IconData fallbackIcon) {
-    // Intenta cargar la imagen del asset, si no existe muestra el icono fallback
+    // Precache de imágenes para mejorar rendimiento
+    final primaryColor = Theme.of(context).primaryColor;
+
     try {
       return Image.asset(
         assetPath,
@@ -374,7 +348,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         errorBuilder: (context, error, stackTrace) {
           return Icon(
             fallbackIcon,
-            color: Theme.of(context).primaryColor,
+            color: primaryColor,
             size: 30,
           );
         },
@@ -382,7 +356,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } catch (e) {
       return Icon(
         fallbackIcon,
-        color: Theme.of(context).primaryColor,
+        color: primaryColor,
         size: 30,
       );
     }

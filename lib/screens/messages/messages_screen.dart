@@ -3,6 +3,7 @@ import '../onboarding/onboarding_screen.dart' show AnimatedBackground;
 import '../home/home_screen.dart';
 import '../appointments/appointments_screen.dart';
 import '../productos/productos_screen.dart';
+import '../configuracion/configuracion_screen.dart'; // Importar la pantalla de configuración
 import '../../widgets/side_menu.dart'; // Importar el menú lateral compartido
 
 class MessagesScreen extends StatefulWidget {
@@ -80,7 +81,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.settings_outlined, size: 22),
-                  onPressed: () {},
+                  onPressed: () {
+                    // Navegar a la pantalla de configuración
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const ConfiguracionScreen()),
+                    );
+                  },
                 ),
                 const SizedBox(width: 4),
               ],
@@ -239,28 +245,26 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      if (_controller.text.trim().isNotEmpty) {
-                                        setState(() {
-                                          _messages.add(_Message(text: _controller.text.trim(), isClient: true));
-                                        });
-                                        _controller.clear();
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      elevation: 0,
-                                      backgroundColor: Theme.of(context).primaryColor,
-                                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                      textStyle: const TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 13,
-                                        letterSpacing: 0.2,
-                                      ),
+                                  // Botón circular con icono de envío
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Theme.of(context).primaryColor,
                                     ),
-                                    child: const Text('Enviar'),
+                                    child: IconButton(
+                                      icon: const Icon(Icons.send, color: Colors.white, size: 20),
+                                      onPressed: () {
+                                        if (_controller.text.trim().isNotEmpty) {
+                                          setState(() {
+                                            _messages.add(_Message(text: _controller.text.trim(), isClient: true));
+                                          });
+                                          _controller.clear();
+                                        }
+                                      },
+                                      padding: const EdgeInsets.all(10),
+                                      constraints: const BoxConstraints(),
+                                      splashRadius: 24,
+                                    ),
                                   ),
                                 ],
                               ),
