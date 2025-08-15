@@ -45,7 +45,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          AnimatedBackground(),
+          const AnimatedBackground(),
           Center(
             child: Padding(
               padding: const EdgeInsets.all(32.0),
@@ -92,34 +92,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 }
 
+// Clase para el fondo animado que se usa en varias pantallas
 class AnimatedBackground extends StatefulWidget {
+  const AnimatedBackground({Key? key}) : super(key: key);
+
   @override
-  State<AnimatedBackground> createState() => _AnimatedBackgroundState();
+  _AnimatedBackgroundState createState() => _AnimatedBackgroundState();
 }
 
-class _AnimatedBackgroundState extends State<AnimatedBackground>
-    with SingleTickerProviderStateMixin {
+class _AnimatedBackgroundState extends State<AnimatedBackground> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<Color?> _color1;
-  late Animation<Color?> _color2;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 15),
       vsync: this,
-    )..repeat(reverse: true);
-
-    _color1 = ColorTween(
-      begin: Colors.blue.shade200,
-      end: Colors.blue.shade900,
-    ).animate(_controller);
-
-    _color2 = ColorTween(
-      begin: Colors.cyan.shade100,
-      end: Colors.indigo.shade200,
-    ).animate(_controller);
+    )..repeat();
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -130,18 +125,31 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
 
   @override
   Widget build(BuildContext context) {
+    // Usando el nuevo color #5f89c5 y variaciones
+    const baseColor = Color(0xFF5f89c5);
+    const secondaryColor = Color(0xFF8BACE0); // Un tono más claro
+    const accentColor = Color(0xFF4A6A9D); // Un tono más oscuro
+
     return AnimatedBuilder(
-      animation: _controller,
+      animation: _animation,
       builder: (context, child) {
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                _color1.value ?? Colors.blue,
-                _color2.value ?? Colors.cyan,
-              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
+              colors: [
+                baseColor,
+                secondaryColor,
+                baseColor.withOpacity(0.8),
+                accentColor,
+              ],
+              stops: [
+                0,
+                _animation.value * 0.3,
+                _animation.value * 0.7,
+                1,
+              ],
             ),
           ),
         );

@@ -3,6 +3,7 @@ import '../onboarding/onboarding_screen.dart' show AnimatedBackground;
 import '../home/home_screen.dart';
 import '../appointments/appointments_screen.dart';
 import '../productos/productos_screen.dart';
+import '../../widgets/side_menu.dart'; // Importar el menú lateral compartido
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({Key? key}) : super(key: key);
@@ -24,6 +25,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const baseColor = Color(0xFF5f89c5);
     final bool isLargeScreen = MediaQuery.of(context).size.width > 700;
     final textTheme = Theme.of(context).textTheme;
 
@@ -36,7 +38,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
               child: Stack(
                 children: [
                   AnimatedBackground(),
-                  _SideMenu(selectedIndex: _selectedIndex),
+                  SideMenu(selectedIndex: _selectedIndex), // Usar el menú compartido
                 ],
               ),
             ),
@@ -54,14 +56,14 @@ class _MessagesScreenState extends State<MessagesScreen> {
             AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
-              title: Text(
+              title: const Text(
                 'Mensajes',
-                style: textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 22,
-                  color: Colors.white,
-                  letterSpacing: 0.5,
+                style: TextStyle(
                   fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 20,
+                  letterSpacing: 0.5,
+                  color: Colors.white,
                 ),
               ),
               centerTitle: true,
@@ -103,7 +105,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                         child: Stack(
                           children: [
                             ClipRect(child: AnimatedBackground()),
-                            _SideMenu(selectedIndex: _selectedIndex),
+                            SideMenu(selectedIndex: _selectedIndex), // Usar el menú compartido
                           ],
                         ),
                       ),
@@ -124,9 +126,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
                               child: Row(
                                 children: [
                                   CircleAvatar(
-                                    backgroundColor: Colors.blue[50],
+                                    backgroundColor: baseColor.withOpacity(0.1),
                                     radius: 20,
-                                    child: Icon(Icons.person, color: Colors.blue[700], size: 20),
+                                    child: Icon(Icons.person, color: baseColor, size: 20),
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
@@ -135,19 +137,21 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                       children: [
                                         Text(
                                           'Dr. Javier López',
-                                          style: textTheme.titleSmall?.copyWith(
+                                          style: TextStyle(
+                                            fontFamily: 'Montserrat',
                                             fontWeight: FontWeight.w600,
                                             fontSize: 15,
-                                            fontFamily: 'Montserrat',
+                                            letterSpacing: 0.1,
+                                            color: Colors.grey[800],
                                           ),
                                         ),
                                         Text(
                                           'En línea',
-                                          style: textTheme.bodySmall?.copyWith(
-                                            color: Colors.green,
+                                          style: TextStyle(
+                                            fontFamily: 'Montserrat',
                                             fontWeight: FontWeight.w500,
                                             fontSize: 11,
-                                            fontFamily: 'Montserrat',
+                                            color: Colors.green,
                                           ),
                                         ),
                                       ],
@@ -176,7 +180,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                         maxWidth: MediaQuery.of(context).size.width * (isLargeScreen ? 0.5 : 0.7),
                                       ),
                                       decoration: BoxDecoration(
-                                        color: msg.isClient ? Colors.blue[50] : Colors.grey[100],
+                                        color: msg.isClient ? baseColor.withOpacity(0.1) : Colors.grey[100],
                                         borderRadius: BorderRadius.only(
                                           topLeft: const Radius.circular(14),
                                           topRight: const Radius.circular(14),
@@ -184,15 +188,18 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                           bottomRight: Radius.circular(msg.isClient ? 0 : 14),
                                         ),
                                         border: Border.all(
-                                          color: msg.isClient ? Colors.blue[100]! : Colors.grey[200]!,
+                                          color: msg.isClient ? baseColor.withOpacity(0.3) : Colors.grey[200]!,
                                           width: 0.5,
                                         ),
                                       ),
                                       child: Text(
                                         msg.text,
-                                        style: textTheme.bodyMedium?.copyWith(
-                                          fontSize: 14,
+                                        style: TextStyle(
                                           fontFamily: 'Montserrat',
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          height: 1.4,
+                                          letterSpacing: 0.1,
                                           color: Colors.grey[900],
                                         ),
                                       ),
@@ -211,15 +218,17 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                     child: TextField(
                                       controller: _controller,
                                       style: const TextStyle(
-                                        fontSize: 14,
                                         fontFamily: 'Montserrat',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
                                       ),
                                       decoration: InputDecoration(
                                         hintText: 'Escribe un mensaje...',
-                                        hintStyle: const TextStyle(
-                                          fontSize: 13,
-                                          color: Colors.grey,
+                                        hintStyle: TextStyle(
                                           fontFamily: 'Montserrat',
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.grey[500],
                                         ),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(8),
@@ -248,6 +257,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                         fontFamily: 'Montserrat',
                                         fontWeight: FontWeight.w600,
                                         fontSize: 13,
+                                        letterSpacing: 0.2,
                                       ),
                                     ),
                                     child: const Text('Enviar'),
@@ -340,148 +350,4 @@ class _Message {
   final String text;
   final bool isClient;
   _Message({required this.text, required this.isClient});
-}
-
-// Menú lateral adaptado y más fino
-class _SideMenu extends StatelessWidget {
-  final int selectedIndex;
-  const _SideMenu({required this.selectedIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        DrawerHeader(
-          decoration: const BoxDecoration(
-            color: Colors.transparent,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.white,
-                child: Icon(Icons.local_hospital, size: 22, color: Colors.blue),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Clínica Médica',
-                style: textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Montserrat',
-                ),
-              ),
-              Text(
-                'Gestión Sanitaria',
-                style: textTheme.bodySmall?.copyWith(
-                  color: Colors.white.withOpacity(0.8),
-                  fontSize: 12,
-                  fontFamily: 'Montserrat',
-                ),
-              ),
-            ],
-          ),
-        ),
-        _MenuListTile(
-          icon: Icons.dashboard,
-          title: 'Panel Principal',
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          },
-          isSelected: selectedIndex == 0,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.calendar_today,
-          title: 'Citas',
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const AppointmentsScreen()),
-            );
-          },
-          isSelected: selectedIndex == 1,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.shopping_bag,
-          title: 'Productos',
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const ProductosScreen()),
-            );
-          },
-          isSelected: selectedIndex == 2,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.chat,
-          title: 'Mensajes',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          isSelected: selectedIndex == 3,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        // ...otros elementos del menú si los necesitas...
-      ],
-    );
-  }
-}
-
-class _MenuListTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-  final bool isSelected;
-  final Color textColor;
-  final Color iconColor;
-
-  const _MenuListTile({
-    required this.icon,
-    required this.title,
-    required this.onTap,
-    this.isSelected = false,
-    this.textColor = Colors.black,
-    this.iconColor = Colors.black,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(7),
-        color: isSelected ? Colors.white.withOpacity(0.18) : null,
-      ),
-      child: ListTile(
-        dense: true,
-        visualDensity: VisualDensity.compact,
-        leading: Icon(
-          icon,
-          size: 18,
-          color: isSelected ? Colors.white : iconColor.withOpacity(0.8),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 13,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? Colors.white : textColor.withOpacity(0.8),
-          ),
-        ),
-        onTap: onTap,
-      ),
-    );
-  }
 }

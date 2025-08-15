@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import '../onboarding/onboarding_screen.dart' show AnimatedBackground; // Ruta actualizada
+import '../onboarding/onboarding_screen.dart' show AnimatedBackground;
 import '../appointments/appointments_screen.dart';
 import '../productos/productos_screen.dart';
-import '../messages/messages_screen.dart'; // Añadido
+import '../messages/messages_screen.dart';
+import '../configuracion/configuracion_screen.dart';
+import '../notifications/notifications_screen.dart';
+import '../notifications/notification_detail_screen.dart'; // Importar pantalla de detalle
+import '../../widgets/side_menu.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -13,6 +17,31 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+
+  // Lista de notificaciones de ejemplo
+  final List<_NotificationItem> _notifications = [
+    _NotificationItem(
+      title: 'Nueva cita confirmada',
+      message: 'Su cita con el Dr. Martínez para mañana a las 10:30 ha sido confirmada.',
+      time: '10 min',
+      isRead: false,
+      type: _NotificationType.appointment,
+    ),
+    _NotificationItem(
+      title: 'Recordatorio de medicación',
+      message: 'Es hora de tomar su medicación prescrita. No olvide seguir el tratamiento.',
+      time: '1 hora',
+      isRead: false,
+      type: _NotificationType.medication,
+    ),
+    _NotificationItem(
+      title: 'Resultados disponibles',
+      message: 'Los resultados de su análisis de sangre ya están disponibles para consulta.',
+      time: '3 horas',
+      isRead: true,
+      type: _NotificationType.results,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   // Fondo animado en el drawer
                   AnimatedBackground(),
-                  _SideMenu(selectedIndex: _selectedIndex), // Pasa el índice seleccionado
+                  SideMenu(selectedIndex: _selectedIndex), // Usar el menú compartido
                 ],
               ),
             ),
@@ -38,9 +67,11 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(
           'Clínica Médica',
-          style: textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
+          style: const TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+            letterSpacing: 0.5,
             color: Colors.white,
           ),
         ),
@@ -63,7 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               IconButton(
                 icon: const Icon(Icons.notifications_outlined, size: 26),
-                onPressed: () {},
+                onPressed: () {
+                  _showNotificationsPanel(context);
+                },
               ),
               Positioned(
                 top: 8,
@@ -79,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     minHeight: 16,
                   ),
                   child: Text(
-                    '3',
+                    '${_notifications.where((n) => !n.isRead).length}',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 10,
@@ -93,7 +126,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined, size: 26),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ConfiguracionScreen()),
+              );
+            },
           ),
           const SizedBox(width: 8),
         ],
@@ -120,13 +157,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             // Fondo transparente para dejar ver el AnimatedBackground
                             ClipRect(child: AnimatedBackground()),
-                            _SideMenu(selectedIndex: _selectedIndex), // Pasa el índice seleccionado
+                            SideMenu(selectedIndex: _selectedIndex), // Usar el menú compartido
                           ],
                         ),
                       ),
                     Expanded(
                       child: Container(
-                        color: Colors.white, // Mantenemos el fondo blanco para el dashboard
+                        color: Colors.white,
                         child: SingleChildScrollView(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
@@ -137,9 +174,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                                 child: Text(
                                   'Panel de Control',
-                                  style: textTheme.headlineMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.w700,
                                     fontSize: 28,
+                                    letterSpacing: -0.5,
+                                    color: Colors.grey[800],
                                   ),
                                 ),
                               ),
@@ -345,209 +385,235 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
     );
   }
-}
 
-class _SideMenu extends StatelessWidget {
-  final int selectedIndex;
-  const _SideMenu({this.selectedIndex = 0});
-
-  @override
-  Widget build(BuildContext context) {
+  // Método para mostrar el panel de notificaciones
+  void _showNotificationsPanel(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
 
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        DrawerHeader(
-          decoration: BoxDecoration(
-            color: Colors.transparent, // Fondo transparente para ver el AnimatedBackground
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.white,
-                child: Icon(Icons.local_hospital, size: 30, color: Colors.blue),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Clínica Médica',
-                style: textTheme.titleLarge?.copyWith(
+    showDialog(
+      context: context,
+      barrierColor: Colors.transparent,
+      builder: (context) {
+        return Align(
+          alignment: Alignment.topRight,
+          child: Padding(
+            padding: EdgeInsets.only(
+              top: AppBar().preferredSize.height + MediaQuery.of(context).padding.top + 8,
+              right: 8,
+            ),
+            child: Material(
+              elevation: 8,
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: size.width > 700 ? 400 : size.width * 0.85,
+                constraints: BoxConstraints(
+                  maxHeight: size.height * 0.7,
+                ),
+                decoration: BoxDecoration(
                   color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Encabezado
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Notificaciones',
+                            style: textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              // Aquí iría la lógica para marcar todas como leídas
+                              Navigator.pop(context);
+                            },
+                            borderRadius: BorderRadius.circular(4),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text(
+                                'Marcar todas como leídas',
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: Theme.of(context).primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const Divider(height: 1),
+
+                    // Lista de notificaciones
+                    _notifications.isEmpty
+                        ? _buildEmptyNotifications()
+                        : Flexible(
+                            child: ListView.separated(
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              itemCount: _notifications.length,
+                              separatorBuilder: (context, index) => const Divider(height: 1),
+                              itemBuilder: (context, index) {
+                                return _NotificationTile(
+                                  notification: _notifications[index],
+                                  onTap: () {
+                                    // Cerrar el panel de notificaciones
+                                    Navigator.pop(context);
+
+                                    // Convertir el tipo local a tipo de notifications_screen.dart
+                                    NotificationType notificationType;
+                                    switch (_notifications[index].type) {
+                                      case _NotificationType.appointment:
+                                        notificationType = NotificationType.appointment;
+                                        break;
+                                      case _NotificationType.medication:
+                                        notificationType = NotificationType.medication;
+                                        break;
+                                      case _NotificationType.results:
+                                        notificationType = NotificationType.results;
+                                        break;
+                                      case _NotificationType.system:
+                                        notificationType = NotificationType.system;
+                                        break;
+                                    }
+
+                                    // Crear un objeto NotificationItem para usar con NotificationDetailScreen
+                                    final notificationItem = NotificationItem(
+                                      id: index.toString(),
+                                      title: _notifications[index].title,
+                                      message: _notifications[index].message,
+                                      time: _notifications[index].time,
+                                      date: 'Hoy',
+                                      fullContent: _getFullContent(_notifications[index]),
+                                      isRead: _notifications[index].isRead,
+                                      type: notificationType,
+                                    );
+
+                                    // Navegar a la pantalla de detalle
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => NotificationDetailScreen(
+                                          notification: notificationItem,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+
+                    const Divider(height: 1),
+
+                    // Botón para ver todas
+                    SizedBox(
+                      width: double.infinity,
+                      child: TextButton(
+                        onPressed: () {
+                          // Cerrar el panel
+                          Navigator.pop(context);
+
+                          // Navegar a la pantalla de notificaciones
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const NotificationsScreen(),
+                            ),
+                          );
+                        },
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          foregroundColor: Theme.of(context).primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              bottom: Radius.circular(12),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'Ver todas las notificaciones',
+                          style: textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Text(
-                'Gestión Sanitaria',
-                style: textTheme.bodyMedium?.copyWith(
-                  color: Colors.white.withOpacity(0.8),
-                ),
-              ),
-            ],
-          ),
-        ),
-        _MenuListTile(
-          icon: Icons.dashboard,
-          title: 'Panel Principal',
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          },
-          isSelected: selectedIndex == 0,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.calendar_today,
-          title: 'Citas',
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const AppointmentsScreen()),
-            );
-          },
-          isSelected: selectedIndex == 1,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.shopping_bag,  // Cambio del icono a shopping_bag
-          title: 'Productos',        // Cambio de Pacientes a Productos
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const ProductosScreen()),
-            );
-          },
-          isSelected: selectedIndex == 2,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.chat,
-          title: 'Mensajes',
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const MessagesScreen()),
-            );
-          },
-          isSelected: selectedIndex == 3,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.article,
-          title: 'Noticias',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.medical_services,
-          title: 'Servicios',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.bar_chart,
-          title: 'Estadísticas',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        const Divider(color: Colors.white54),
-        _MenuListTile(
-          icon: Icons.settings,
-          title: 'Configuración',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        Container(
-          margin: const EdgeInsets.all(16),
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
             ),
-            icon: const Icon(Icons.logout),
-            label: Text(
-              'Cerrar Sesión',
-              style: textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onPressed: () {
-              Navigator.of(context).maybePop();
-            },
           ),
-        ),
-      ],
+        );
+      },
     );
   }
-}
 
-class _MenuListTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-  final bool isSelected;
-  final Color textColor;
-  final Color iconColor;
+  // Método para obtener contenido completo para cada notificación
+  String _getFullContent(_NotificationItem notification) {
+    // Generamos contenido completo basado en el tipo de notificación
+    switch (notification.type) {
+      case NotificationType.appointment:
+        return 'Estimado paciente,\n\nLe confirmamos que su cita ha sido programada correctamente.\n\n${notification.message}\n\nPor favor, llegue 15 minutos antes de la hora programada y traiga consigo su documento de identidad y tarjeta sanitaria.\n\nSi necesita cancelar o reprogramar su cita, hágalo con al menos 24 horas de antelación.\n\nGracias por confiar en Clínica Médica.';
 
-  const _MenuListTile({
-    required this.icon,
-    required this.title,
-    required this.onTap,
-    this.isSelected = false,
-    this.textColor = Colors.black,
-    this.iconColor = Colors.black,
-  });
+      case NotificationType.medication:
+        return 'Recordatorio de medicación:\n\n${notification.message}\n\nRecuerde tomar este medicamento con alimentos y beber suficiente agua.\n\nNo omita ninguna dosis para garantizar la efectividad del tratamiento. Si experimenta algún efecto secundario, contacte a su médico inmediatamente.\n\nSu salud es nuestra prioridad.';
 
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+      case NotificationType.results:
+        return 'Estimado paciente,\n\n${notification.message}\n\nPuede acceder a ellos desde la sección "Mis resultados" o descargarlos directamente desde esta notificación.\n\nSu médico ha sido notificado y revisará los resultados en su próxima consulta. Si hay algún hallazgo que requiera atención inmediata, nos pondremos en contacto con usted.\n\nGracias por confiar en nuestros servicios.';
 
+      case NotificationType.system:
+      default:
+        return 'Información del sistema:\n\n${notification.message}\n\nGracias por usar nuestra aplicación.\n\nSi tiene alguna pregunta o sugerencia, no dude en contactar con nuestro servicio de atención al cliente.';
+    }
+  }
+
+  // Widget para mostrar cuando no hay notificaciones
+  Widget _buildEmptyNotifications() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: isSelected ? Colors.white.withOpacity(0.2) : null,
-      ),
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: isSelected ? Colors.white : iconColor.withOpacity(0.8),
-        ),
-        title: Text(
-          title,
-          style: textTheme.bodyLarge?.copyWith(
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? Colors.white : textColor.withOpacity(0.8),
+      padding: const EdgeInsets.all(24.0),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.notifications_off_outlined,
+            size: 48,
+            color: Colors.grey[400],
           ),
-        ),
-        onTap: onTap,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+          const SizedBox(height: 16),
+          Text(
+            'No hay notificaciones',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: Colors.grey[700],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Cuando reciba notificaciones, aparecerán aquí',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
 }
+
+// Eliminamos la clase _SideMenu ya que ahora usamos el componente compartido
 
 class _CardContainer extends StatelessWidget {
   final String title;
@@ -580,9 +646,12 @@ class _CardContainer extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   title,
-                  style: textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600,
                     fontSize: 18,
+                    letterSpacing: 0.2,
+                    color: Colors.grey[800],
                   ),
                 ),
               ],
@@ -644,15 +713,20 @@ class _AppointmentItem extends StatelessWidget {
             children: [
               Text(
                 time,
-                style: textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: Colors.grey[800],
                 ),
               ),
               Text(
                 status,
-                style: textTheme.bodySmall?.copyWith(
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
                   color: statusColor,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -664,13 +738,21 @@ class _AppointmentItem extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                    color: Colors.grey[800],
                   ),
                 ),
                 Text(
                   service,
-                  style: textTheme.bodyMedium,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 13,
+                    color: Colors.grey[600],
+                  ),
                 ),
               ],
             ),
@@ -701,6 +783,7 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    const baseColor = Color(0xFF5f89c5);
 
     return Expanded(
       child: Card(
@@ -716,15 +799,15 @@ class _StatCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(icon, color: color),
+                  Icon(icon, color: color == Colors.blue ? baseColor : color),
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+                      color: (color == Colors.blue ? baseColor : color).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(Icons.trending_up, color: color, size: 16),
+                    child: Icon(Icons.trending_up, color: color == Colors.blue ? baseColor : color, size: 16),
                   ),
                 ],
               ),
@@ -765,7 +848,8 @@ class _QuickAccessButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    const baseColor = Color(0xFF5f89c5);
+    final textTheme = Theme.of(context).textTheme; // Agregado para definir textTheme
 
     return Expanded(
       child: Card(
@@ -785,10 +869,10 @@ class _QuickAccessButton extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: (color == Colors.blue ? baseColor : color).withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(icon, color: color, size: 24),
+                  child: Icon(icon, color: color == Colors.blue ? baseColor : color, size: 24),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -804,5 +888,165 @@ class _QuickAccessButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+// Tipos de notificaciones (para uso interno en HomeScreen)
+enum _NotificationType {
+  appointment,
+  medication,
+  results,
+  system,
+}
+
+// Clase para almacenar información de una notificación
+class _NotificationItem {
+  final String title;
+  final String message;
+  final String time;
+  final bool isRead;
+  final _NotificationType type;
+
+  _NotificationItem({
+    required this.title,
+    required this.message,
+    required this.time,
+    required this.isRead,
+    required this.type,
+  });
+}
+
+// Widget para mostrar una notificación individual
+class _NotificationTile extends StatelessWidget {
+  final _NotificationItem notification;
+  final VoidCallback onTap;
+
+  const _NotificationTile({
+    required this.notification,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Color backgroundColor = notification.isRead
+        ? Colors.transparent
+        : Theme.of(context).primaryColor.withOpacity(0.05);
+
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        color: backgroundColor,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Icono según tipo de notificación
+            Container(
+              margin: const EdgeInsets.only(top: 2),
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: _getNotificationColor(notification.type).withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                _getNotificationIcon(notification.type),
+                color: _getNotificationColor(notification.type),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+
+            // Contenido
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          notification.title,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontWeight: notification.isRead
+                                ? FontWeight.w500
+                                : FontWeight.w700,
+                            fontSize: 14,
+                            color: Colors.grey[800],
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        notification.time,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    notification.message,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 13,
+                      height: 1.4,
+                      color: Colors.grey[700],
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+
+            // Indicador de no leída
+            if (!notification.isRead)
+              Container(
+                width: 8,
+                height: 8,
+                margin: const EdgeInsets.only(left: 8, top: 8),
+                decoration: BoxDecoration(
+                  color: _getNotificationColor(notification.type),
+                  shape: BoxShape.circle,
+                ),
+              ),
+          ],
+        ),
+      ),
+      );
+  }
+
+  IconData _getNotificationIcon(_NotificationType type) {
+    switch (type) {
+      case _NotificationType.appointment:
+        return Icons.calendar_today;
+      case _NotificationType.medication:
+        return Icons.medication;
+      case _NotificationType.results:
+        return Icons.description;
+      case _NotificationType.system:
+        return Icons.info;
+    }
+  }
+
+  Color _getNotificationColor(_NotificationType type) {
+    const baseColor = Color(0xFF5f89c5);
+
+    switch (type) {
+      case _NotificationType.appointment:
+        return baseColor;
+      case _NotificationType.medication:
+        return Colors.orange;
+      case _NotificationType.results:
+        return Colors.green;
+      case _NotificationType.system:
+        return Color(0xFF8BACE0); // Versión más clara del color principal
+    }
   }
 }

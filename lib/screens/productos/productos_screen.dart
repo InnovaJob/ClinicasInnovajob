@@ -3,6 +3,7 @@ import '../onboarding/onboarding_screen.dart' show AnimatedBackground; // Ruta a
 import '../home/home_screen.dart';
 import '../appointments/appointments_screen.dart';
 import '../messages/messages_screen.dart'; // Añadido
+import '../../widgets/side_menu.dart'; // Importar el menú lateral compartido
 
 class ProductosScreen extends StatefulWidget {
   const ProductosScreen({Key? key}) : super(key: key);
@@ -36,7 +37,7 @@ class _ProductosScreenState extends State<ProductosScreen> {
               child: Stack(
                 children: [
                   AnimatedBackground(),
-                  _SideMenu(selectedIndex: _selectedIndex),
+                  SideMenu(selectedIndex: _selectedIndex), // Usar el menú compartido
                 ],
               ),
             ),
@@ -45,8 +46,10 @@ class _ProductosScreenState extends State<ProductosScreen> {
         title: const Text(
           'Productos',
           style: TextStyle(
-            fontWeight: FontWeight.normal,
-            fontSize: 18,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+            letterSpacing: 0.5,
             color: Colors.white,
           ),
         ),
@@ -89,7 +92,7 @@ class _ProductosScreenState extends State<ProductosScreen> {
                         child: Stack(
                           children: [
                             ClipRect(child: AnimatedBackground()),
-                            _SideMenu(selectedIndex: _selectedIndex),
+                            SideMenu(selectedIndex: _selectedIndex), // Usar el menú compartido
                           ],
                         ),
                       ),
@@ -113,8 +116,11 @@ class _ProductosScreenState extends State<ProductosScreen> {
                                         const Text(
                                           'Productos destacados',
                                           style: TextStyle(
-                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: FontWeight.w600,
                                             fontSize: 16,
+                                            letterSpacing: 0.2,
+                                            color: Colors.black87,
                                           ),
                                         ),
                                         const Spacer(),
@@ -282,9 +288,10 @@ class _ProductosScreenState extends State<ProductosScreen> {
               child: Text(
                 _categories[index],
                 style: TextStyle(
+                  fontFamily: 'Montserrat',
                   fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                   color: isSelected ? Colors.white : Colors.grey[800],
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
             ),
@@ -295,205 +302,6 @@ class _ProductosScreenState extends State<ProductosScreen> {
   }
 }
 
-// Menú lateral simplificado
-class _SideMenu extends StatelessWidget {
-  final int selectedIndex;
-
-  const _SideMenu({required this.selectedIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        DrawerHeader(
-          decoration: const BoxDecoration(
-            color: Colors.transparent,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.white,
-                child: Icon(Icons.local_hospital, size: 24, color: Colors.blue),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Clínica Médica',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Text(
-                'Gestión Sanitaria',
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.8),
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-        _MenuListTile(
-          icon: Icons.dashboard,
-          title: 'Panel Principal',
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          },
-          isSelected: selectedIndex == 0,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.calendar_today,
-          title: 'Citas',
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const AppointmentsScreen()),
-            );
-          },
-          isSelected: selectedIndex == 1,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.shopping_bag,
-          title: 'Productos',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          isSelected: selectedIndex == 2,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.chat,
-          title: 'Mensajes',
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const MessagesScreen()),
-            );
-          },
-          isSelected: selectedIndex == 3,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.article,
-          title: 'Noticias',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.medical_services,
-          title: 'Servicios',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.bar_chart,
-          title: 'Estadísticas',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        const Divider(color: Colors.white54),
-        _MenuListTile(
-          icon: Icons.settings,
-          title: 'Configuración',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        Container(
-          margin: const EdgeInsets.all(16),
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            icon: const Icon(Icons.logout),
-            label: const Text(
-              'Cerrar Sesión',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onPressed: () {
-              Navigator.of(context).maybePop();
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _MenuListTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-  final bool isSelected;
-  final Color textColor;
-  final Color iconColor;
-
-  const _MenuListTile({
-    required this.icon,
-    required this.title,
-    required this.onTap,
-    this.isSelected = false,
-    this.textColor = Colors.black,
-    this.iconColor = Colors.black,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4),
-        color: isSelected ? Colors.white.withOpacity(0.2) : null,
-      ),
-      child: ListTile(
-        dense: true,
-        visualDensity: VisualDensity.compact,
-        leading: Icon(
-          icon,
-          size: 18,
-          color: isSelected ? Colors.white : iconColor.withOpacity(0.8),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? Colors.white : textColor.withOpacity(0.8),
-          ),
-        ),
-        onTap: onTap,
-      ),
-    );
-  }
-}
 
 // Tarjeta de producto minimalista
 class _ProductCard extends StatelessWidget {
@@ -515,6 +323,8 @@ class _ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const baseColor = Color(0xFF5f89c5);
+
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(
@@ -553,7 +363,7 @@ class _ProductCard extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: baseColor,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Text(
@@ -598,8 +408,11 @@ class _ProductCard extends StatelessWidget {
                   Text(
                     name,
                     style: const TextStyle(
-                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w600,
                       fontSize: 14,
+                      letterSpacing: 0.1,
+                      color: Colors.black87,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -608,8 +421,10 @@ class _ProductCard extends StatelessWidget {
                   Text(
                     category,
                     style: TextStyle(
-                      color: Colors.grey[600],
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w400,
                       fontSize: 12,
+                      color: Colors.grey[600],
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -619,14 +434,15 @@ class _ProductCard extends StatelessWidget {
                       Text(
                         price,
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w700,
                           fontSize: 16,
-                          color: Theme.of(context).primaryColor,
+                          color: baseColor,
                         ),
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
+                          color: baseColor,
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(

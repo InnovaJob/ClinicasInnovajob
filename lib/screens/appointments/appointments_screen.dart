@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../onboarding/onboarding_screen.dart' show AnimatedBackground; // Ruta actualizada
 import '../home/home_screen.dart';
 import '../productos/productos_screen.dart'; // Importar la nueva pantalla de productos
+import '../messages/messages_screen.dart'; // Importar pantalla de mensajes
+import '../../widgets/side_menu.dart'; // Importar el menú lateral compartido
 
 class AppointmentsScreen extends StatefulWidget {
   const AppointmentsScreen({Key? key}) : super(key: key);
@@ -37,17 +39,19 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
               child: Stack(
                 children: [
                   AnimatedBackground(),
-                  _SideMenu(selectedIndex: _selectedIndex),
+                  SideMenu(selectedIndex: _selectedIndex), // Usar el menú compartido
                 ],
               ),
             ),
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Citas',
           style: TextStyle(
-            fontWeight: FontWeight.normal,
-            fontSize: 18,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+            letterSpacing: 0.5,
             color: Colors.white,
           ),
         ),
@@ -86,7 +90,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                         child: Stack(
                           children: [
                             ClipRect(child: AnimatedBackground()),
-                            _SideMenu(selectedIndex: _selectedIndex),
+                            SideMenu(selectedIndex: _selectedIndex), // Usar el menú compartido
                           ],
                         ),
                       ),
@@ -110,8 +114,11 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                                         Text(
                                           _formatDate(_selectedDate),
                                           style: const TextStyle(
-                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: FontWeight.w600,
                                             fontSize: 16,
+                                            letterSpacing: 0.2,
+                                            color: Colors.black87,
                                           ),
                                         ),
                                         const Spacer(),
@@ -276,16 +283,19 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                     Text(
                       _getWeekday(date.weekday),
                       style: TextStyle(
+                        fontFamily: 'Montserrat',
                         fontSize: 11,
+                        fontWeight: FontWeight.w500,
                         color: isSelected ? Colors.white : Colors.grey[600],
                       ),
                     ),
                     Text(
                       date.day.toString(),
                       style: TextStyle(
+                        fontFamily: 'Montserrat',
                         fontSize: 14,
-                        color: isSelected ? Colors.white : Colors.black,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                        color: isSelected ? Colors.white : Colors.black87,
                       ),
                     ),
                   ],
@@ -317,201 +327,6 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
   }
 }
 
-// Menú lateral simplificado
-class _SideMenu extends StatelessWidget {
-  final int selectedIndex;
-
-  const _SideMenu({required this.selectedIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        DrawerHeader(
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.white,
-                child: Icon(Icons.local_hospital, size: 24, color: Colors.blue),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Clínica Médica',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Text(
-                'Gestión Sanitaria',
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.8),
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-        _MenuListTile(
-          icon: Icons.dashboard,
-          title: 'Panel Principal',
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          },
-          isSelected: selectedIndex == 0,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.calendar_today,
-          title: 'Citas',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          isSelected: selectedIndex == 1,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.shopping_bag,  // Cambio del icono a shopping_bag
-          title: 'Productos',        // Cambio de Pacientes a Productos
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const ProductosScreen()),
-            );
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.chat,
-          title: 'Contactar Doctor',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.article,
-          title: 'Noticias',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.medical_services,
-          title: 'Servicios',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        _MenuListTile(
-          icon: Icons.bar_chart,
-          title: 'Estadísticas',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        const Divider(color: Colors.white54),
-        _MenuListTile(
-          icon: Icons.settings,
-          title: 'Configuración',
-          onTap: () {
-            Navigator.of(context).maybePop();
-          },
-          textColor: Colors.white,
-          iconColor: Colors.white,
-        ),
-        Container(
-          margin: const EdgeInsets.all(16),
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            icon: const Icon(Icons.logout),
-            label: Text(
-              'Cerrar Sesión',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onPressed: () {
-              Navigator.of(context).maybePop();
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _MenuListTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-  final bool isSelected;
-  final Color textColor;
-  final Color iconColor;
-
-  const _MenuListTile({
-    required this.icon,
-    required this.title,
-    required this.onTap,
-    this.isSelected = false,
-    this.textColor = Colors.black,
-    this.iconColor = Colors.black,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4),
-        color: isSelected ? Colors.white.withOpacity(0.2) : null,
-      ),
-      child: ListTile(
-        dense: true,
-        visualDensity: VisualDensity.compact,
-        leading: Icon(
-          icon,
-          size: 18,
-          color: isSelected ? Colors.white : iconColor.withOpacity(0.8),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? Colors.white : textColor.withOpacity(0.8),
-          ),
-        ),
-        onTap: onTap,
-      ),
-    );
-  }
-}
 
 // Tarjeta de cita ultra minimalista
 class _AppointmentCard extends StatelessWidget {
@@ -533,6 +348,8 @@ class _AppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const baseColor = Color(0xFF5f89c5);
+
     Color statusColor;
     switch (status.toLowerCase()) {
       case 'confirmada':
@@ -543,7 +360,7 @@ class _AppointmentCard extends StatelessWidget {
         statusColor = Colors.orange;
         break;
       case 'completada':
-        statusColor = Colors.blue;
+        statusColor = baseColor;  // Cambiado de azul al color base
         break;
       case 'cancelada':
         statusColor = Colors.red;
@@ -570,8 +387,10 @@ class _AppointmentCard extends StatelessWidget {
               Text(
                 time,
                 style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  color: Colors.black87,
                 ),
               ),
               const SizedBox(width: 12),
@@ -584,15 +403,19 @@ class _AppointmentCard extends StatelessWidget {
                     Text(
                       patientName,
                       style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                        color: Colors.black87,
                       ),
                     ),
                     Text(
                       service,
                       style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 13,
                         color: Colors.grey[700],
-                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -609,9 +432,10 @@ class _AppointmentCard extends StatelessWidget {
                 child: Text(
                   status,
                   style: TextStyle(
+                    fontFamily: 'Montserrat',
                     fontSize: 10,
+                    fontWeight: FontWeight.w600,
                     color: statusColor,
-                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
