@@ -72,16 +72,15 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: isLargeScreen
-            ? null
-            : Builder(
-                builder: (context) => IconButton(
-                  icon: const Icon(Icons.menu, size: 22),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                ),
-              ),
+        // Reemplazamos el botón de menú hamburguesa por el botón de volver atrás
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        // Eliminamos el botón de volver atrás de la sección de acciones
+        actions: null,
       ),
       body: Stack(
         children: [
